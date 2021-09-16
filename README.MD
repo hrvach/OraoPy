@@ -46,6 +46,17 @@ pressing shift + 2. Erase by using the left arrow.
 
 It *should* be cross-platform.
 
+Loading `.prg` files
+--------------------
+
+Run emulator with:
+
+```sh
+./orao.py [path/to/file.prg]
+```
+Then press F8 to load and start program.
+
+
 Known bugs
 ----------
 

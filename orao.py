@@ -5,9 +5,17 @@ import pygame, numpy, sys, datetime, wave, time
 from orao.cpu import CPU
 from orao.keyboard import listener as orao_kbd_listener
 
+MEM_LOAD_PRG = None
+
+if len(sys.argv) == 2:
+    MEM_LOAD_PRG = sys.argv[1]
+
+
+# pygame init
+ratio, running = 0, True
+
 pygame.mixer.pre_init(44100, 8, 1, buffer=2048)
 pygame.init()
-ratio, running = 0, True
 pygame.time.set_timer(pygame.USEREVENT + 1, 40)
 
 # setup surfaces
@@ -40,8 +48,27 @@ while running:
         orao_kbd_listener(event, cpu)
 
         if event.type in [pygame.KEYDOWN, pygame.KEYUP]:
-            if pygame.key.get_pressed()[pygame.K_ESCAPE]:
+            pkeys = pygame.key.get_pressed()
+            if pkeys[pygame.K_ESCAPE]:
                 running = False
+
+            if pkeys[pygame.K_F8]:
+                print("LOADING: %s" % MEM_LOAD_PRG)
+                ba = bytearray(open(MEM_LOAD_PRG, "rb").read())
+
+                # read load address
+                addr = ba[1] * 256 + ba[0]
+                ba = ba[2:]
+                print('Loadaddr: %04x' % addr)
+
+                # load file to memory
+                for i in range(0, len(ba)):
+                    cpu.memory[addr + i] = ba[i]
+
+                # run
+                cpu.pc = addr
+                # HACK: reset stack pointer
+                cpu.sp = 241
 
         if event.type == pygame.USEREVENT + 1:
             screen.blit(background, [0, 0])
