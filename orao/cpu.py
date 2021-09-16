@@ -103,7 +103,7 @@ class CPU(object):
         self.memory[addr] = val & 0xFF
 
         for listener in self.store_mem_listeners:
-            listener(addr, val)
+            listener(addr, val, self)
 
     def stack_push(self, value):
         self.store_byte(256 + self.sp, value & 0xFF)
