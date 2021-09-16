@@ -13,8 +13,9 @@ _kbd = {
 	0x87DE: (101, 113, 119, 49), 0x87DF: (50, 51),    # [e q w l]  [2  3]
 	0x87EE: (111, 105, 117, 55), 0x87EF: (56, 57),    # [o i u 7]  [8  9]
 	0x87F6: (114, 121, 116, 54), 0x87F7: (53, 52),    # [r y t 6]  [5  4]
-	0x87FA: (282, 283, 284, 285), 0x87FD: (13, 306),  # [f1f2f3f4] [cr l_ctrl]
-	0x87FC: (276, 273, 274, 275), 0x87FB: (32, 304)   # [arrows]   [spc l_shift]
+	0x87FA: (282, 283, 284, pygame.K_RCTRL), 0x87FD: (13, pygame.K_LCTRL),  # [f1f2f3f4] [cr l_ctrl]
+	0x87FC: (pygame.K_LEFT, pygame.K_UP, pygame.K_DOWN, pygame.K_RIGHT),
+	0x87FB: (32, pygame.K_RSHIFT) # [spc l_shift]
 }
 
 def listener(event, cpu):
