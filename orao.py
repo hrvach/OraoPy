@@ -22,9 +22,9 @@ pygame.init()
 pygame.time.set_timer(pygame.USEREVENT + 1, 40)
 
 # setup surfaces
-screen = pygame.display.set_mode((800, 900))
-background = pygame.image.load("pozadina.png").convert_alpha()
+screen = pygame.display.set_mode((512+1+8+8+1+1+32*3, 512+ 3*8 + 2))
 pygame.display.set_caption('Orao Emulator v0.1')
+from orao.micro_mem_view import micro_mem_view, store_mem_view, micro_mem_view_dims
 
 # create CPU
 cpu = CPU(bytearray([0xFF]*0xC000) + bytearray(open('ORAO13.ROM', 'rb').read()))
@@ -34,10 +34,33 @@ cpu.store_mem_listeners.append(timer_mem_listener)
 
 chargen_init(cpu.memory[0xE000:])
 
-status_line = pygame.Surface((120 * 8, 3*8), depth=24)
+# status lines
+status_line = pygame.Surface((64 * 8, 3*8), depth=24)
 status_line.fill((0, 0, 0))
 chargen_draw_str(status_line, 0, 0, 'Orao Emulator v0.1')
-chargen_draw_str(status_line, 0, 16, 'F8: %s' % MEM_LOAD_PRG)
+if MEM_LOAD_PRG is not None:
+    chargen_draw_str(status_line, 0, 16, 'F8:', color=(0, 0, 0), bg=(0, 255, 0))
+    chargen_draw_str(status_line, 24, 16, ' %s' % MEM_LOAD_PRG)
+
+# memory view labels
+MAX_LABELS = 33
+mem_map_labels = pygame.Surface((2*8+1, MAX_LABELS*8*2), depth=24)
+mem_map_labels.fill((0, 0, 0))
+for i in range(0, MAX_LABELS):
+    chargen_draw_str(mem_map_labels, 0, i*8*3, '%02x' % i, color=(0xff, 0xcc, 0x00))
+    mem_map_labels.set_at((16, i*8*3), (0, 255, 0))
+
+def render_frame():
+    store_mem_view(cpu.memory)
+
+    screen.fill((0, 0, 0))
+    screen.blit(pygame.transform.smoothscale(terminal, (512, 512)), [0, 0])
+    chargen_draw_str(status_line, 0, 8, 'Speed: {0:.2f} MHz'.format(ratio))
+    screen.blit(status_line, [0, 512+1])
+    w, h = micro_mem_view_dims
+    screen.blit(mem_map_labels, [512+1, 0])
+    screen.blit(pygame.transform.scale(micro_mem_view, (w * 3, h * 3)), [512 + 1 + 8 + 8 + 1 + 1, 0])
+    pygame.display.flip()
 
 while running:
     before, previous_loop_cycles = datetime.datetime.now(), cpu.cycles
@@ -81,11 +104,7 @@ while running:
                 cpu.sp = 241
 
         if event.type == pygame.USEREVENT + 1:
-            screen.blit(background, [0, 0])
-            screen.blit(pygame.transform.smoothscale(terminal, (512, 512)), [150, 140])
-            chargen_draw_str(status_line, 0, 8, 'Speed: {0:.2f} MHz'.format(ratio))
-            screen.blit(status_line, [1, 875])
-            pygame.display.flip()
+            render_frame()
 
             cpu.tape_out = None if cpu.cycles - cpu.last_sound_cycles > 20000 else cpu.tape_out
 
