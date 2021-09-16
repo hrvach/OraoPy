@@ -39,6 +39,10 @@ while running:
 
         orao_kbd_listener(event, cpu)
 
+        if event.type in [pygame.KEYDOWN, pygame.KEYUP]:
+            if pygame.key.get_pressed()[pygame.K_ESCAPE]:
+                running = False
+
         if event.type == pygame.USEREVENT + 1:
             screen.blit(background, [0, 0])
             screen.blit(pygame.transform.smoothscale(terminal, (512, 512)), [150, 140])
