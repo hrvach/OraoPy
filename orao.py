@@ -3,6 +3,7 @@
 
 import pygame, numpy, sys, datetime, wave, time
 from orao.cpu import CPU
+from orao.keyboard import listener as orao_kbd_listener
 
 pygame.mixer.pre_init(44100, 8, 1, buffer=2048)
 pygame.init()
@@ -36,10 +37,7 @@ while running:
             if 650 < x < 700 and 720 < y < 790:             # Reset button
                 cpu.__init__(cpu.memory[:])                 # Warm reset
 
-        if event.type in [pygame.KEYDOWN, pygame.KEYUP]:
-            for address, keycodes in cpu._kbd.iteritems():
-                keys = map(pygame.key.get_pressed().__getitem__, keycodes)
-                cpu.memory[address] = ~numpy.dot(keys, [16,32,64,128][:len(keys)]) & 0xFF
+        orao_kbd_listener(event, cpu)
 
         if event.type == pygame.USEREVENT + 1:
             screen.blit(background, [0, 0])
