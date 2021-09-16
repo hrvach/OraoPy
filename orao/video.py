@@ -8,4 +8,4 @@ def mem_listener(addr, val, cpu):
 	if 0x6000 <= addr <= 0x7FFF:  # Video RAM
 		y, x = divmod((addr - 0x6000) * 8, 256)
 		for i in range(8):
-			alphaarray[x + i, y] = 255 if (val >> i) & 1 else 0  # Transparency mask
+			alphaarray[x + i, y] = 255 if (val >> i) & 1 else 40  # Transparency mask
