@@ -6,6 +6,7 @@ from orao.cpu import CPU
 from orao.keyboard import listener as orao_kbd_listener
 from orao.video import mem_listener as video_mem_listener, terminal
 from orao.timer import mem_listener as timer_mem_listener
+from orao.chargen import chargen_init, chargen_draw_str
 
 MEM_LOAD_PRG = None
 
@@ -23,12 +24,20 @@ pygame.time.set_timer(pygame.USEREVENT + 1, 40)
 # setup surfaces
 screen = pygame.display.set_mode((800, 900))
 background = pygame.image.load("pozadina.png").convert_alpha()
+pygame.display.set_caption('Orao Emulator v0.1')
 
 # create CPU
 cpu = CPU(bytearray([0xFF]*0xC000) + bytearray(open('ORAO13.ROM', 'rb').read()))
 cpu.channel = pygame.mixer.Channel(0)
 cpu.store_mem_listeners.append(video_mem_listener)
 cpu.store_mem_listeners.append(timer_mem_listener)
+
+chargen_init(cpu.memory[0xE000:])
+
+status_line = pygame.Surface((120 * 8, 3*8), depth=24)
+status_line.fill((0, 0, 0))
+chargen_draw_str(status_line, 0, 0, 'Orao Emulator v0.1')
+chargen_draw_str(status_line, 0, 16, 'F8: %s' % MEM_LOAD_PRG)
 
 while running:
     before, previous_loop_cycles = datetime.datetime.now(), cpu.cycles
@@ -74,9 +83,9 @@ while running:
         if event.type == pygame.USEREVENT + 1:
             screen.blit(background, [0, 0])
             screen.blit(pygame.transform.smoothscale(terminal, (512, 512)), [150, 140])
-
-            pygame.display.set_caption('({0:.2f} MHz) Orao Emulator v0.1'.format(ratio))
-            pygame.display.update()
+            chargen_draw_str(status_line, 0, 8, 'Speed: {0:.2f} MHz'.format(ratio))
+            screen.blit(status_line, [1, 875])
+            pygame.display.flip()
 
             cpu.tape_out = None if cpu.cycles - cpu.last_sound_cycles > 20000 else cpu.tape_out
 
