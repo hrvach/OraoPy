@@ -62,5 +62,7 @@ Then press F8 to load and start program.
 Known bugs
 ----------
 
-- Pygame and Pulseaudio crash occasionally.
+- Pygame and Pulseaudio crash occasionally. - it seems that this 
+  fork is less prone to lock-ups and **pygame*** crashes.
+  Please report any issues you have.
 - no error checking for input `.prg` file
