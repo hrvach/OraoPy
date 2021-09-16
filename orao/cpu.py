@@ -5,6 +5,7 @@ import wave
 class CPU(object):
     CARRY, ZERO, INTERRUPT, DECIMAL, BREAK, UNUSED, OVERFLOW, NEGATIVE = [2**i for i in range(8)]
     alphaarray = None
+    store_mem_listeners = []
 
     def __init__(self, memory):
         s, self.tape_out, self.filename, self.samples = self, None, None, 0
@@ -98,13 +99,11 @@ class CPU(object):
             return
 
         if addr == 0x8800: self.speaker()                           # Zvucnik
-        if 0x6000 <= addr <= 0x7FFF:                                # Video RAM
-            if self.alphaarray is not None:
-                y, x = divmod((addr - 0x6000) * 8, 256)
-                for i in range(8):
-                    self.alphaarray[x+i, y] = 255 if (val>>i) & 1 else 0    # Transparency mask
 
         self.memory[addr] = val & 0xFF
+
+        for listener in self.store_mem_listeners:
+            listener(addr, val)
 
     def stack_push(self, value):
         self.store_byte(256 + self.sp, value & 0xFF)
