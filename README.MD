@@ -62,4 +62,5 @@ Then press F8 to load and start program.
 Known bugs
 ----------
 
-Pygame and Pulseaudio crash occasionally.
+- Pygame and Pulseaudio crash occasionally.
+- no error checking for input `.prg` file
