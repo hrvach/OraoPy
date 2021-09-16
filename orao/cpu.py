@@ -1,10 +1,10 @@
-#!/usr/bin/python2
 # -*- coding: utf8 -*-
 
-import pygame, numpy, sys, datetime, wave, time
+import wave
 
 class CPU(object):
     CARRY, ZERO, INTERRUPT, DECIMAL, BREAK, UNUSED, OVERFLOW, NEGATIVE = [2**i for i in range(8)]
+    alphaarray = None
 
     def __init__(self, memory):
         s, self.tape_out, self.filename, self.samples = self, None, None, 0
@@ -64,13 +64,6 @@ class CPU(object):
         s.ticks = {s.im: 1, s.zp: 1, s.zx: 1, s.zy: 1, s.ab: 2, s.ax: 2, s.no: 0,
                    s.ay: 2, s.jm: 2, s.id: 2, s.ix: 1, s.iy: 1, s.re: 1}
 
-        self.screen = pygame.display.set_mode((800, 900))
-        self.terminal = pygame.Surface((256, 256), pygame.SRCALPHA, depth=32)
-        self.terminal.fill((255, 255, 255))
-        self.alphaarray = pygame.surfarray.pixels_alpha(self.terminal)
-
-        self.background = pygame.image.load("pozadina.png").convert_alpha()
-
     def get_flag(self, flag): return self.flags & flag != 0
 
     def set_flag(self, flag, boolean):
@@ -116,9 +109,10 @@ class CPU(object):
 
         if addr == 0x8800: self.speaker()                           # Zvucnik
         if 0x6000 <= addr <= 0x7FFF:                                # Video RAM
-            y, x = divmod((addr - 0x6000) * 8, 256)
-            for i in range(8):
-                self.alphaarray[x+i, y] = 255 if (val>>i) & 1 else 0    # Transparency mask
+            if self.alphaarray is not None:
+                y, x = divmod((addr - 0x6000) * 8, 256)
+                for i in range(8):
+                    self.alphaarray[x+i, y] = 255 if (val>>i) & 1 else 0    # Transparency mask
 
         self.memory[addr] = val & 0xFF
 

@@ -4,11 +4,21 @@
 import pygame, numpy, sys, datetime, wave, time
 from orao.cpu import CPU
 
-cpu = CPU(bytearray([0xFF]*0xC000) + bytearray(open('ORAO13.ROM', 'rb').read()))
 pygame.mixer.pre_init(44100, 8, 1, buffer=2048)
 pygame.init()
-ratio, cpu.channel, running = 0, pygame.mixer.Channel(0), True
+ratio, running = 0, True
 pygame.time.set_timer(pygame.USEREVENT + 1, 40)
+
+# setup surfaces
+screen = pygame.display.set_mode((800, 900))
+background = pygame.image.load("pozadina.png").convert_alpha()
+terminal = pygame.Surface((256, 256), pygame.SRCALPHA, depth=32)
+terminal.fill((255, 255, 255))
+
+# create CPU
+cpu = CPU(bytearray([0xFF]*0xC000) + bytearray(open('ORAO13.ROM', 'rb').read()))
+cpu.alphaarray = pygame.surfarray.pixels_alpha(terminal)
+cpu.channel = pygame.mixer.Channel(0)
 
 while running:
     before, previous_loop_cycles = datetime.datetime.now(), cpu.cycles
@@ -32,8 +42,8 @@ while running:
                 cpu.memory[address] = ~numpy.dot(keys, [16,32,64,128][:len(keys)]) & 0xFF
 
         if event.type == pygame.USEREVENT + 1:
-            cpu.screen.blit(cpu.background, [0, 0])
-            cpu.screen.blit(pygame.transform.smoothscale(cpu.terminal, (512, 512)), [150, 140])
+            screen.blit(background, [0, 0])
+            screen.blit(pygame.transform.smoothscale(terminal, (512, 512)), [150, 140])
 
             pygame.display.set_caption('({0:.2f} MHz) Orao Emulator v0.1'.format(ratio))
             pygame.display.update()
