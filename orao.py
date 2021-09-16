@@ -5,6 +5,7 @@ import pygame, numpy, sys, datetime, wave, time
 from orao.cpu import CPU
 from orao.keyboard import listener as orao_kbd_listener
 from orao.video import mem_listener as video_mem_listener, terminal
+from orao.timer import mem_listener as timer_mem_listener
 
 MEM_LOAD_PRG = None
 
@@ -27,6 +28,7 @@ background = pygame.image.load("pozadina.png").convert_alpha()
 cpu = CPU(bytearray([0xFF]*0xC000) + bytearray(open('ORAO13.ROM', 'rb').read()))
 cpu.channel = pygame.mixer.Channel(0)
 cpu.store_mem_listeners.append(video_mem_listener)
+cpu.store_mem_listeners.append(timer_mem_listener)
 
 while running:
     before, previous_loop_cycles = datetime.datetime.now(), cpu.cycles
