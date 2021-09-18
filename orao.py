@@ -86,6 +86,8 @@ while running:
                 running = False
 
             if pkeys[pygame.K_F8]:
+                if MEM_LOAD_PRG is None:
+                    break
                 print("LOADING: %s" % MEM_LOAD_PRG)
                 ba = bytearray(open(MEM_LOAD_PRG, "rb").read())
 
