@@ -10,6 +10,7 @@ from orao.chargen import chargen_init, chargen_draw_str
 
 # views
 from orao.views.cpu_state import CPUState
+from orao.views.heatmap import MemHeatmap
 
 MEM_LOAD_PRG = None
 
@@ -27,7 +28,6 @@ pygame.time.set_timer(pygame.USEREVENT + 1, 40)
 # setup surfaces
 screen = pygame.display.set_mode((512+1+8+8+1+1+32*3, 512+ 3*8 + 2))
 pygame.display.set_caption('Orao Emulator v0.1')
-from orao.micro_mem_view import micro_mem_view, store_mem_view, micro_mem_view_dims
 
 # create CPU
 cpu = CPU(bytearray([0xFF]*0xC000) + bytearray(open('ORAO13.ROM', 'rb').read()))
@@ -39,6 +39,7 @@ chargen_init(cpu.memory[0xE000:])
 
 # views
 view_cpu_state = CPUState()
+view_heatmap = MemHeatmap()
 
 # status lines
 status_line = pygame.Surface((64 * 8, 3*8), depth=24)
@@ -48,18 +49,11 @@ if MEM_LOAD_PRG is not None:
     chargen_draw_str(status_line, 0, 16, 'F8:', color=(0, 0, 0), bg=(0, 255, 0))
     chargen_draw_str(status_line, 24, 16, ' %s' % MEM_LOAD_PRG)
 
-# memory view labels
-MAX_LABELS = 33
-mem_map_labels = pygame.Surface((2*8+1, MAX_LABELS*8*2), depth=24)
-mem_map_labels.fill((0, 0, 0))
-for i in range(0, MAX_LABELS):
-    chargen_draw_str(mem_map_labels, 0, i*8*3, '%02x' % i, color=(0xff, 0xcc, 0x00))
-    mem_map_labels.set_at((16, i*8*3), (0, 255, 0))
-
 def render_frame():
-    store_mem_view(cpu.memory)
     view_cpu_state.render(cpu)
+    view_heatmap.render(cpu)
 
+    # blit
     screen.fill((0, 0, 0))
     screen.blit(pygame.transform.smoothscale(terminal, (512, 512)), [0, 0])
     chargen_draw_str(status_line, 0, 8, 'Speed: {0:.2f} MHz'.format(ratio))
@@ -69,9 +63,8 @@ def render_frame():
     _, lsy = view_cpu_state.blit(screen, [lsx, lsy], scale=1.8)
 
     lsy += 1
-    w, h = micro_mem_view_dims
-    screen.blit(mem_map_labels, [lsx, lsy])
-    screen.blit(pygame.transform.scale(micro_mem_view, (w * 3, h * 3)), [lsx + 8 + 8 + 1 + 1, lsy])
+    view_heatmap.blit(screen, [lsx, lsy])
+
     # finish rendering
     pygame.display.flip()
 
