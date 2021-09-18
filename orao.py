@@ -21,6 +21,7 @@ if len(sys.argv) == 2:
 # pygame init
 ratio, running = 0, True
 
+# mixer setup
 pygame.mixer.pre_init(44100, 8, 1, buffer=2048)
 pygame.init()
 pygame.time.set_timer(pygame.USEREVENT + 1, 40)
