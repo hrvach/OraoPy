@@ -8,6 +8,9 @@ from orao.video import mem_listener as video_mem_listener, terminal
 from orao.timer import mem_listener as timer_mem_listener
 from orao.chargen import chargen_init, chargen_draw_str
 
+# views
+from orao.views.cpu_state import CPUState
+
 MEM_LOAD_PRG = None
 
 if len(sys.argv) == 2:
@@ -34,6 +37,9 @@ cpu.store_mem_listeners.append(timer_mem_listener)
 
 chargen_init(cpu.memory[0xE000:])
 
+# views
+view_cpu_state = CPUState()
+
 # status lines
 status_line = pygame.Surface((64 * 8, 3*8), depth=24)
 status_line.fill((0, 0, 0))
@@ -52,14 +58,21 @@ for i in range(0, MAX_LABELS):
 
 def render_frame():
     store_mem_view(cpu.memory)
+    view_cpu_state.render(cpu)
 
     screen.fill((0, 0, 0))
     screen.blit(pygame.transform.smoothscale(terminal, (512, 512)), [0, 0])
     chargen_draw_str(status_line, 0, 8, 'Speed: {0:.2f} MHz'.format(ratio))
     screen.blit(status_line, [0, 512+1])
+    lsx = 512 + 1
+    lsy = 0
+    _, lsy = view_cpu_state.blit(screen, [lsx, lsy], scale=1.8)
+
+    lsy += 1
     w, h = micro_mem_view_dims
-    screen.blit(mem_map_labels, [512+1, 0])
-    screen.blit(pygame.transform.scale(micro_mem_view, (w * 3, h * 3)), [512 + 1 + 8 + 8 + 1 + 1, 0])
+    screen.blit(mem_map_labels, [lsx, lsy])
+    screen.blit(pygame.transform.scale(micro_mem_view, (w * 3, h * 3)), [lsx + 8 + 8 + 1 + 1, lsy])
+    # finish rendering
     pygame.display.flip()
 
 while running:
