@@ -26,10 +26,6 @@ pygame.mixer.pre_init(44100, 8, 1, buffer=2048)
 pygame.init()
 pygame.time.set_timer(pygame.USEREVENT + 1, 40)
 
-# setup surfaces
-screen = pygame.display.set_mode((512+1+8+8+1+1+32*3, 512+ 3*8 + 2))
-pygame.display.set_caption('Orao Emulator v0.1')
-
 # create CPU
 cpu = CPU(bytearray([0xFF]*0xC000) + bytearray(open('ORAO13.ROM', 'rb').read()))
 cpu.channel = pygame.mixer.Channel(0)
@@ -46,6 +42,15 @@ view_heatmap = MemHeatmap()
 status_line = pygame.Surface((64 * 8, 3*8), depth=24)
 status_line.fill((0, 0, 0))
 chargen_draw_str(status_line, 0, 0, 'Orao Emulator v0.1')
+
+# setup screen
+screen = pygame.display.set_mode((
+    terminal.get_width() * 2 + 1 + int(max(view_heatmap.width, view_cpu_state.width*1.8)),
+    terminal.get_height() * 2 + 3*8 + 2
+))
+pygame.display.set_caption('Orao Emulator v0.1')
+
+
 if MEM_LOAD_PRG is not None:
     chargen_draw_str(status_line, 0, 16, 'F8:', color=(0, 0, 0), bg=(0, 255, 0))
     chargen_draw_str(status_line, 24, 16, ' %s' % MEM_LOAD_PRG)
