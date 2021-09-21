@@ -6,6 +6,7 @@ class CPU(object):
     CARRY, ZERO, INTERRUPT, DECIMAL, BREAK, UNUSED, OVERFLOW, NEGATIVE = [2**i for i in range(8)]
     alphaarray = None
     store_mem_listeners = []
+    read_mem_listeners = []
 
     def __init__(self, memory):
         s, self.tape_out, self.filename, self.samples = self, None, None, 0
@@ -91,6 +92,11 @@ class CPU(object):
                 return 0x00
 
         if addr == 0x8800: self.speaker()                           # Zvucnik
+
+        if addr is not None:
+            for listener in self.read_mem_listeners:
+                listener(addr, 0, self)
+
         return self.memory[addr] if addr is not None else self.a
 
     def store_byte(self, addr, val):
