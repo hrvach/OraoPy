@@ -1,7 +1,7 @@
 Orao Emulator
 ============
 
-![Screenshot](assets/screenshot.png?raw=true)
+![Screenshot](assets/screenshot-20211017-225446.png?raw=true)
 
 [Orao](https://en.wikipedia.org/wiki/Orao_%28computer%29) is a Croatian 8-bit
 computer used primarily in elementary schools, as part of a computer literacy
