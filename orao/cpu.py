@@ -16,41 +16,41 @@ class CPU(object):
 
         s._opcodes = {       0x00:(s.BRK,s.no,7), 0x01:(s.ORA,s.ix,6), 0x05:(s.ORA,s.zp,3),
         0x06:(s.ASL,s.zp,5), 0x08:(s.PHP,s.no,3), 0x09:(s.ORA,s.im,2), 0x0a:(s.ASL,s.no,2),
-        0x0d:(s.ORA,s.ab,4), 0x0e:(s.ASL,s.ab,6), 0x10:(s.BPL,s.re,4), 0x11:(s.ORA,s.iy,6),
+        0x0d:(s.ORA,s.ab,4), 0x0e:(s.ASL,s.ab,6), 0x10:(s.BPL,s.re,2), 0x11:(s.ORA,s.iy,6),
         0x15:(s.ORA,s.zx,4), 0x16:(s.ASL,s.zx,6), 0x18:(s.CLC,s.no,2), 0x19:(s.ORA,s.ay,5),
         0x1d:(s.ORA,s.ax,5), 0x1e:(s.ASL,s.ax,7), 0x20:(s.JSR,s.jm,6), 0x21:(s.AND,s.ix,6),
         0x24:(s.BIT,s.zp,3), 0x25:(s.AND,s.zp,3), 0x26:(s.ROL,s.zp,5), 0x28:(s.PLP,s.no,4),
         0x29:(s.AND,s.im,2), 0x2a:(s.ROL,s.no,2), 0x2c:(s.BIT,s.ab,4), 0x2d:(s.AND,s.ab,4),
-        0x2e:(s.ROL,s.ab,6), 0x30:(s.BMI,s.re,4), 0x31:(s.AND,s.iy,6), 0x35:(s.AND,s.zx,4),
+        0x2e:(s.ROL,s.ab,6), 0x30:(s.BMI,s.re,2), 0x31:(s.AND,s.iy,6), 0x35:(s.AND,s.zx,4),
         0x36:(s.ROL,s.zx,6), 0x38:(s.SEC,s.no,2), 0x39:(s.AND,s.ay,5), 0x3d:(s.AND,s.ax,5),
         0x3e:(s.ROL,s.ax,7), 0x40:(s.RTI,s.no,6), 0x41:(s.EOR,s.ix,6), 0x45:(s.EOR,s.zp,3),
         0x46:(s.LSR,s.zp,5), 0x48:(s.PHA,s.no,3), 0x49:(s.EOR,s.im,2), 0x4a:(s.LSR,s.no,2),
-        0x4c:(s.JMP,s.jm,3), 0x4d:(s.EOR,s.ab,4), 0x4e:(s.LSR,s.ab,6), 0x50:(s.BVC,s.re,4),
+        0x4c:(s.JMP,s.jm,3), 0x4d:(s.EOR,s.ab,4), 0x4e:(s.LSR,s.ab,6), 0x50:(s.BVC,s.re,2),
         0x51:(s.EOR,s.iy,6), 0x55:(s.EOR,s.zx,4), 0x56:(s.LSR,s.zx,6), 0x58:(s.CLI,s.no,2),
         0x59:(s.EOR,s.ay,5), 0x5d:(s.EOR,s.ax,5), 0x5e:(s.LSR,s.ax,7), 0x60:(s.RTS,s.no,6),
         0x61:(s.ADC,s.ix,6), 0x65:(s.ADC,s.zp,3), 0x66:(s.ROR,s.zp,5), 0x68:(s.PLA,s.no,4),
         0x69:(s.ADC,s.im,2), 0x6a:(s.ROR,s.no,2), 0x6c:(s.JMP,s.id,5), 0x6d:(s.ADC,s.ab,4),
-        0x6e:(s.ROR,s.ab,6), 0x70:(s.BVS,s.re,3), 0x71:(s.ADC,s.iy,6), 0x75:(s.ADC,s.zx,4),
+        0x6e:(s.ROR,s.ab,6), 0x70:(s.BVS,s.re,2), 0x71:(s.ADC,s.iy,6), 0x75:(s.ADC,s.zx,4),
         0x76:(s.ROR,s.zx,6), 0x78:(s.SEI,s.no,2), 0x79:(s.ADC,s.ay,5), 0x7d:(s.ADC,s.ax,5),
         0x7e:(s.ROR,s.ax,7), 0x81:(s.STA,s.ix,6), 0x84:(s.STY,s.zp,3), 0x85:(s.STA,s.zp,3),
         0x86:(s.STX,s.zp,3), 0x88:(s.DEY,s.no,2), 0x8a:(s.TXA,s.no,2), 0x8c:(s.STY,s.ab,4),
-        0x8d:(s.STA,s.ab,4), 0x8e:(s.STX,s.ab,4), 0x90:(s.BCC,s.re,4), 0x91:(s.STA,s.iy,6),
+        0x8d:(s.STA,s.ab,4), 0x8e:(s.STX,s.ab,4), 0x90:(s.BCC,s.re,2), 0x91:(s.STA,s.iy,6),
         0x94:(s.STY,s.zx,4), 0x95:(s.STA,s.zx,4), 0x96:(s.STX,s.zy,4), 0x98:(s.TYA,s.no,2),
         0x99:(s.STA,s.ay,5), 0x9a:(s.TXS,s.no,2), 0x9d:(s.STA,s.ax,5), 0xa0:(s.LDY,s.im,2),
         0xa1:(s.LDA,s.ix,6), 0xa2:(s.LDX,s.im,2), 0xa4:(s.LDY,s.zp,3), 0xa5:(s.LDA,s.zp,3),
         0xa6:(s.LDX,s.zp,3), 0xa8:(s.TAY,s.no,2), 0xa9:(s.LDA,s.im,2), 0xaa:(s.TAX,s.no,2),
-        0xac:(s.LDY,s.ab,4), 0xad:(s.LDA,s.ab,4), 0xae:(s.LDX,s.ab,4), 0xb0:(s.BCS,s.re,4),
+        0xac:(s.LDY,s.ab,4), 0xad:(s.LDA,s.ab,4), 0xae:(s.LDX,s.ab,4), 0xb0:(s.BCS,s.re,2),
         0xb1:(s.LDA,s.iy,6), 0xb4:(s.LDY,s.zx,4), 0xb5:(s.LDA,s.zx,4), 0xb6:(s.LDX,s.zy,4),
-        0xb8:(s.CLV,s.no,2), 0xb9:(s.LDA,s.ay,5), 0xba:(s.TSX,s.no,2), 0xbc:(s.LDY,s.ax,5),
-        0xbd:(s.LDA,s.ax,5), 0xbe:(s.LDX,s.ay,5), 0xc0:(s.CPY,s.im,2), 0xc1:(s.CMP,s.ix,6),
+        0xb8:(s.CLV,s.no,2), 0xb9:(s.LDA,s.ay,4), 0xba:(s.TSX,s.no,2), 0xbc:(s.LDY,s.ax,4),
+        0xbd:(s.LDA,s.ax,4), 0xbe:(s.LDX,s.ay,4), 0xc0:(s.CPY,s.im,2), 0xc1:(s.CMP,s.ix,6),
         0xc4:(s.CPY,s.zp,3), 0xc5:(s.CMP,s.zp,3), 0xc6:(s.DEC,s.zp,5), 0xc8:(s.INY,s.no,2),
         0xc9:(s.CMP,s.im,2), 0xca:(s.DEX,s.no,2), 0xcc:(s.CPY,s.ab,4), 0xcd:(s.CMP,s.ab,4),
-        0xce:(s.DEC,s.ab,3), 0xd0:(s.BNE,s.re,4), 0xd1:(s.CMP,s.iy,6), 0xd5:(s.CMP,s.zx,4),
+        0xce:(s.DEC,s.ab,6), 0xd0:(s.BNE,s.re,2), 0xd1:(s.CMP,s.iy,6), 0xd5:(s.CMP,s.zx,4),
         0xd6:(s.DEC,s.zx,6), 0xd8:(s.CLD,s.no,2), 0xd9:(s.CMP,s.ay,5), 0xdd:(s.CMP,s.ax,5),
         0xde:(s.DEC,s.ax,7), 0xe0:(s.CPX,s.im,2), 0xe1:(s.SBC,s.ix,6), 0xe4:(s.CPX,s.zp,3),
         0xe5:(s.SBC,s.zp,3), 0xe6:(s.INC,s.zp,5), 0xe8:(s.INX,s.no,2), 0xe9:(s.SBC,s.im,2),
         0xea:(s.NOP,s.no,2), 0xec:(s.CPX,s.ab,4), 0xed:(s.SBC,s.ab,4), 0xee:(s.INC,s.ab,6),
-        0xf0:(s.BEQ,s.re,4), 0xf1:(s.SBC,s.iy,6), 0xf5:(s.SBC,s.zx,4), 0xf6:(s.INC,s.zx,6),
+        0xf0:(s.BEQ,s.re,2), 0xf1:(s.SBC,s.iy,6), 0xf5:(s.SBC,s.zx,4), 0xf6:(s.INC,s.zx,6),
         0xf8:(s.SED,s.no,2), 0xf9:(s.SBC,s.ay,5), 0xfd:(s.SBC,s.ax,5), 0xfe:(s.INC,s.ax,7)}
 
 
@@ -130,13 +130,20 @@ class CPU(object):
     def zx(self): return (self.zp() + self.x) & 0xFF
     def zy(self): return (self.zp() + self.y) & 0xFF
     def ab(self): return self.get_word(self.pc)
-    def ax(self): return (self.ab() + self.x) & 0xFFFF
-    def ay(self): return (self.ab() + self.y) & 0xFFFF
+    def ax(self): return self._ab(self.x)
+    def ay(self): return self._ab(self.y)
     def ix(self): return self.get_word((self.zp() + self.x) & 0xFF)
     def iy(self): return (self.get_word(self.zp()) + self.y) & 0xFFFF
     def id(self): return self.get_word(self.ab())
     def jm(self): return self.ab()
     def no(self): return None
+
+    def _ab(self, diff):
+        a1 = self.ab()
+        a2 = (a1 + diff) & 0xFFFF
+        if abs((a1 & 0xFF00) - (a2 & 0xFF00)) != 0:
+            self.cycles += 1
+        return a2
 
     def re(self):
         loc = self.zp()
