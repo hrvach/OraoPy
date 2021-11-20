@@ -12,6 +12,7 @@ class CPU(object):
         s, self.tape_out, self.filename, self.samples = self, None, None, 0
         s.memory, s.tape, s.flipflop, s.last_sound_cycles, s.sndbuf = memory, None, 0, -20000, []
         s.cycles, s.pc, s.flags, s.sp, s.a, s.x, s.y = 0, 0xFF89, 48, 0xFF, 0, 0, 0
+        s.executed = []
 
         s._opcodes = {       0x00:(s.BRK,s.no,7), 0x01:(s.ORA,s.ix,6), 0x05:(s.ORA,s.zp,3),
         0x06:(s.ASL,s.zp,5), 0x08:(s.PHP,s.no,3), 0x09:(s.ORA,s.im,2), 0x0a:(s.ASL,s.no,2),
@@ -270,10 +271,21 @@ class CPU(object):
     def BVC(self, addr): self.BRANCH(addr, self.OVERFLOW, False)
 
     def step(self):
+        self.executed.append(self.pc)
+
         opcode = self.memory[self.pc]
         self.pc = self.pc + 1 & 0xFFFF
+
+        if opcode not in self._opcodes:
+            print('HALT')
+            for adr in self.executed:
+                print(" - %04x" % adr)
+
         instruction, addressing, cycles = self._opcodes[opcode]
         instruction(addressing())
         self.pc += self.ticks[addressing]
+        if len(self.executed) > 20:
+            self.executed = self.executed[1:]
+
         self.cycles += cycles
 
