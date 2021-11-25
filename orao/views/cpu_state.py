@@ -22,5 +22,5 @@ class CPUState(View):
 		self.draw_text(3 * 8, 2 * 8, '%04X' % cpu.pc)
 		self.draw_text(11 * 8, 2 * 8, '%04X' % (cpu.sp + 0x100))
 
-		self.draw_text(8 * 8, 0 * 8, "NVssDIZC", color=lc)
+		self.draw_text(8 * 8, 0 * 8, "NVsBDIZC", color=lc)
 		self.draw_text(8 * 8, 1 * 8, "{0:b}".format(cpu.flags))
