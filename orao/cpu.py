@@ -298,19 +298,20 @@ class CPU(object):
         return "%04X    %s %s" % (addr, instruction.__name__.lower(), self.addr_fmt[addressing](addr+1)), addr + self.ticks[addressing] + 1
 
     def step(self):
-        self.executed.append(self.pc)
-
         opcode = self.memory[self.pc]
-        self.pc = self.pc + 1 & 0xFFFF
-
         if opcode not in self._opcodes:
             print('HALT')
             for addr in self.executed:
                 code, _ = self.disasm(addr)
                 print(" - %s" % code)
+            print(" > %04x %02x %02x" % (self.pc, self.memory[self.pc], self.memory[self.pc+1]))
+
+        self.executed.append(self.pc)
+        self.pc = self.pc + 1 & 0xFFFF
 
         instruction, addressing, cycles = self._opcodes[opcode]
         instruction(addressing())
+
         self.pc += self.ticks[addressing]
         if len(self.executed) > 20:
             self.executed = self.executed[1:]
