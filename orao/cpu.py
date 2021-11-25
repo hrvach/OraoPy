@@ -57,6 +57,21 @@ class CPU(object):
         s.ticks = {s.im: 1, s.zp: 1, s.zx: 1, s.zy: 1, s.ab: 2, s.ax: 2, s.no: 0,
                    s.ay: 2, s.jm: 2, s.id: 2, s.ix: 1, s.iy: 1, s.re: 1}
 
+        s.addr_fmt = {
+            s.im: lambda addr: "#$%02X" % s.memory[addr],
+            s.zp: lambda addr: "$%02X" % s.memory[addr],
+            s.zx: lambda addr: "$%02X,x" % s.memory[addr],
+            s.zy: lambda addr: "$%02X,y" % s.memory[addr],
+            s.ab: lambda addr: "$%04X" % (256 * s.memory[addr + 1] + s.memory[addr]),
+            s.ax: lambda addr: "$%04X,x" % (256 * s.memory[addr + 1] + s.memory[addr]),
+            s.no: lambda addr: "",
+            s.jm: lambda addr: "$%04X" % (256 * s.memory[addr + 1] + s.memory[addr]),
+            s.id: lambda addr: "($%04X)" % (256 * s.memory[addr + 1] + s.memory[addr]),
+            s.ix: lambda addr: "($%02X,x)" % s.memory[addr],
+            s.iy: lambda addr: "($%02X),y" % s.memory[addr],
+            s.re: lambda addr: "$%04X" % (addr + s.memory[addr] + 1),
+        }
+
     def get_flag(self, flag): return self.flags & flag != 0
 
     def set_flag(self, flag, boolean):
@@ -277,6 +292,11 @@ class CPU(object):
     def BVS(self, addr): self.BRANCH(addr, self.OVERFLOW, True)
     def BVC(self, addr): self.BRANCH(addr, self.OVERFLOW, False)
 
+    # dissasemble address
+    def disasm(self, addr):
+        instruction, addressing, cycles = self._opcodes[self.memory[addr]]
+        return "%04X    %s %s" % (addr, instruction.__name__.lower(), self.addr_fmt[addressing](addr+1)), addr + self.ticks[addressing] + 1
+
     def step(self):
         self.executed.append(self.pc)
 
@@ -285,8 +305,9 @@ class CPU(object):
 
         if opcode not in self._opcodes:
             print('HALT')
-            for adr in self.executed:
-                print(" - %04x" % adr)
+            for addr in self.executed:
+                code, _ = self.disasm(addr)
+                print(" - %s" % code)
 
         instruction, addressing, cycles = self._opcodes[opcode]
         instruction(addressing())
