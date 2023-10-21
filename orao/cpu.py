@@ -64,12 +64,13 @@ class CPU(object):
             s.zy: lambda addr: "$%02X,y" % s.memory[addr],
             s.ab: lambda addr: "$%04X" % (256 * s.memory[addr + 1] + s.memory[addr]),
             s.ax: lambda addr: "$%04X,x" % (256 * s.memory[addr + 1] + s.memory[addr]),
+            s.ay: lambda addr: "$%04X,y" % (256 * s.memory[addr + 1] + s.memory[addr]),
             s.no: lambda addr: "",
             s.jm: lambda addr: "$%04X" % (256 * s.memory[addr + 1] + s.memory[addr]),
             s.id: lambda addr: "($%04X)" % (256 * s.memory[addr + 1] + s.memory[addr]),
             s.ix: lambda addr: "($%02X,x)" % s.memory[addr],
             s.iy: lambda addr: "($%02X),y" % s.memory[addr],
-            s.re: lambda addr: "$%04X" % (addr + s.memory[addr] + 1),
+            s.re: lambda addr: "$%04X" % (addr + self.byte2signed(s.memory[addr]) + 1),
         }
 
     def get_flag(self, flag): return self.flags & flag != 0
@@ -164,6 +165,10 @@ class CPU(object):
         loc = self.zp()
         addr = loc - 256 * (loc > 127) if loc & self.NEGATIVE else loc
         return (self.pc + addr) & 0xFFFF
+
+    def byte2signed(self, loc):
+        return loc - 256 * (loc > 127) if loc & self.NEGATIVE else loc
+
     ###########################################################################
     # Instrukcije
     def TAX(self, d): self.x = self.set_nz(self.a)
