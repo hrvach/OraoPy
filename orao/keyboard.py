@@ -20,7 +20,7 @@ _kbd = {
 
 def listener(event, cpu):
 	if event.type in [pygame.KEYDOWN, pygame.KEYUP]:
-		for address, keycodes in _kbd.iteritems():
-			keys = map(pygame.key.get_pressed().__getitem__, keycodes)
+		for address, keycodes in _kbd.items():
+			keys = list(map(pygame.key.get_pressed().__getitem__, keycodes))
 			cpu.memory[address] = ~numpy.dot(keys, [16, 32, 64, 128][:len(keys)]) & 0xFF
 

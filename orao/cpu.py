@@ -136,7 +136,9 @@ class CPU(object):
         self.sp = (self.sp + 1) & 0xFF
         return self.get_byte(256 + self.sp)
 
-    def stack_push_word(self, val): map(self.stack_push, [(val >> 8) & 0xFF, val & 0xFF])
+    def stack_push_word(self, val):
+        self.stack_push((val >> 8) & 0xFF)
+        self.stack_push(val & 0xFF)
 
     def stack_pop_word(self): return self.stack_pop() + (self.stack_pop() << 8)
     ###########################################################################

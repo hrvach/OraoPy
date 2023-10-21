@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # -*- coding: utf8 -*-
 
 import pygame, numpy, sys, datetime
